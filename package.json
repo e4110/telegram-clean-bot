@@ -1,13 +1,14 @@
 {
-  "name": "telegram-clean-bot",
+  "name": "telegram-cleaner-bot",
   "version": "1.0.0",
-  "description": "Telegram bot to clean n8n branding from messages and forward to channel",
+  "description": "Telegram bot to clean n8n messages and forward clean version to channel using webhook",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "telegraf": "^4.12.2"
   }
 }
