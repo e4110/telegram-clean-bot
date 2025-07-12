@@ -10,44 +10,49 @@ const channel = process.env.TARGET_CHANNEL;
 // -----------------
 // پردازش پیام‌های کانال تست
 bot.on("channel_post", async (ctx) => {
-  const msg = ctx.channelPost.text;
+  // پیام متنی
+  if (ctx.channelPost.text) {
+    const msg = ctx.channelPost.text;
 
-  // لینک مزاحم انتهایی
-  const unwantedLinkRegex = /This message was sent automatically with n8n.*$/s;
+    // الگوی دقیق‌تر برای لینک مزاحم n8n
+    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^)]+\)\s*$/;
 
-  // حذف فقط اون لینک خاص
-  if (msg && unwantedLinkRegex.test(msg)) {
-    const cleanMsg = msg.replace(unwantedLinkRegex, "").trim();
+    // حذف فقط لینک مزاحم n8n
+    if (unwantedLinkRegex.test(msg)) {
+      const cleanMsg = msg.replace(unwantedLinkRegex, "").trim();
 
-    if (cleanMsg.length > 0 && cleanMsg !== msg) {
-      await ctx.telegram.sendMessage(channel, cleanMsg, {
-        parse_mode: "HTML",
-        disable_web_page_preview: false,
-      });
+      if (cleanMsg.length > 0) {
+        await ctx.telegram.sendMessage(channel, cleanMsg, {
+          parse_mode: "HTML",
+          disable_web_page_preview: false,
+        });
+      }
     }
   }
 
-  // کپشن مدیا مثل عکس یا ویدیو
-  const media = ctx.channelPost.photo || ctx.channelPost.video;
-  const caption = ctx.channelPost.caption;
+  // کپشن مدیا
+  if (ctx.channelPost.caption) {
+    const caption = ctx.channelPost.caption;
+    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^)]+\)\s*$/;
 
-  if (media && caption && unwantedLinkRegex.test(caption)) {
-    const cleanCaption = caption.replace(unwantedLinkRegex, "").trim();
+    if (unwantedLinkRegex.test(caption)) {
+      const cleanCaption = caption.replace(unwantedLinkRegex, "").trim();
 
-    if (cleanCaption.length > 0 && cleanCaption !== caption) {
-      if (ctx.channelPost.photo) {
-        const photo = ctx.channelPost.photo[ctx.channelPost.photo.length - 1].file_id;
-        await ctx.telegram.sendPhoto(channel, photo, {
-          caption: cleanCaption,
-          parse_mode: "HTML",
-        });
-      }
-      if (ctx.channelPost.video) {
-        const video = ctx.channelPost.video.file_id;
-        await ctx.telegram.sendVideo(channel, video, {
-          caption: cleanCaption,
-          parse_mode: "HTML",
-        });
+      if (cleanCaption.length > 0) {
+        if (ctx.channelPost.photo) {
+          const photo = ctx.channelPost.photo[ctx.channelPost.photo.length - 1].file_id;
+          await ctx.telegram.sendPhoto(channel, photo, {
+            caption: cleanCaption,
+            parse_mode: "HTML",
+          });
+        }
+        if (ctx.channelPost.video) {
+          const video = ctx.channelPost.video.file_id;
+          await ctx.telegram.sendVideo(channel, video, {
+            caption: cleanCaption,
+            parse_mode: "HTML",
+          });
+        }
       }
     }
   }
