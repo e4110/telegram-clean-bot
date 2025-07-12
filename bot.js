@@ -14,8 +14,8 @@ bot.on("channel_post", async (ctx) => {
   if (ctx.channelPost.text) {
     const msg = ctx.channelPost.text;
 
-    // الگوی دقیق‌تر برای لینک مزاحم n8n
-    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^)]+\)\s*$/;
+    // الگوی دقیق برای لینک مزاحم n8n (فقط لینک n8n را هدف می‌گیرد)
+    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^\)]+\)\s*$/;
 
     // حذف فقط لینک مزاحم n8n
     if (unwantedLinkRegex.test(msg)) {
@@ -33,7 +33,7 @@ bot.on("channel_post", async (ctx) => {
   // کپشن مدیا
   if (ctx.channelPost.caption) {
     const caption = ctx.channelPost.caption;
-    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^)]+\)\s*$/;
+    const unwantedLinkRegex = /This message was sent automatically with n8n\s*\(https:\/\/n8n\.io\/\?utm_source=[^\)]+\)\s*$/;
 
     if (unwantedLinkRegex.test(caption)) {
       const cleanCaption = caption.replace(unwantedLinkRegex, "").trim();
