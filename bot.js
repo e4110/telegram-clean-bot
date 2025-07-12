@@ -14,7 +14,9 @@ bot.on("channel_post", async (ctx) => {
   if (msg && msg.includes("This message was sent automatically with n8n")) {
     const cleanMsg = msg.replace(/This message.*n8n.*/s, "").trim();
     if (cleanMsg.length > 0 && cleanMsg !== msg) {
-      await ctx.telegram.sendMessage(channel, cleanMsg);
+      await ctx.telegram.sendMessage(channel, cleanMsg, {
+        parse_mode: "HTML"
+      });
     }
   }
 
@@ -24,13 +26,17 @@ bot.on("channel_post", async (ctx) => {
   if (media && caption && caption.includes("This message was sent automatically with n8n")) {
     const cleanCaption = caption.replace(/This message.*n8n.*/s, "").trim();
     if (cleanCaption.length > 0 && cleanCaption !== caption) {
+      const options = {
+        caption: cleanCaption,
+        parse_mode: "HTML"
+      };
       if (ctx.channelPost.photo) {
         const photo = ctx.channelPost.photo[ctx.channelPost.photo.length - 1].file_id;
-        await ctx.telegram.sendPhoto(channel, photo, { caption: cleanCaption });
+        await ctx.telegram.sendPhoto(channel, photo, options);
       }
       if (ctx.channelPost.video) {
         const video = ctx.channelPost.video.file_id;
-        await ctx.telegram.sendVideo(channel, video, { caption: cleanCaption });
+        await ctx.telegram.sendVideo(channel, video, options);
       }
     }
   }
